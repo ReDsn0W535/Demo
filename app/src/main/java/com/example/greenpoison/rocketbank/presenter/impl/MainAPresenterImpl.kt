@@ -1,6 +1,7 @@
 package com.example.greenpoison.rocketbank.presenter.impl
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Point
 import com.example.greenpoison.rocketbank.model.impl.MainAModelImpl
 import com.example.greenpoison.rocketbank.model.inter.IMainAModel
@@ -15,7 +16,8 @@ class MainAPresenterImpl(private val mIMainAView: IMainAView) : IMainAPresenter 
         mIMainAModel = MainAModelImpl()
     }
 
-    override fun GetPoints(bitmap: Bitmap)  {
-        (mIMainAModel as MainAModelImpl).DrawRandPoints(bitmap)
+    override fun GetPoints(canvas: Canvas)  {
+        (mIMainAModel as MainAModelImpl).DrawRandPoints(canvas)
     }
+
 }

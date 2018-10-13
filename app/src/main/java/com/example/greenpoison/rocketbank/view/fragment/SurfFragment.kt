@@ -32,6 +32,9 @@ class SurfFragment : Fragment() {
         act = activity as MainActivity
         var v = inflater.inflate(R.layout.fragment, null)
         drawView = v.findViewById(R.id.drawView)
+       // drawView.layoutParams.height = 512
+       // drawView.layoutParams.width = 512
+        drawView.requestLayout()
         return v;
     }
 }
@@ -39,6 +42,7 @@ class SurfFragment : Fragment() {
 
 
 class DrawView: View, IMainAView {
+
     override fun <T> request(requestFlag: Int): T? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -54,17 +58,11 @@ class DrawView: View, IMainAView {
 
 
     override fun onDraw(canvas: Canvas?) {
-
-
-        var paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        var b : Bitmap = Bitmap.createBitmap(this.width,this.height,Bitmap.Config.ARGB_8888)
-        var p = act.mIMainAPresenter!!.GetPoints(b)
-        //Log.e("Draw Log", "bitmap parameters: ${b.width},  ${b.height}")
-        val matrix = Matrix()
-        matrix.setRotate(rotation, (b.width).toFloat(), (b.height).toFloat())
-        canvas!!.drawBitmap(b, matrix, paint)
+        act.mIMainAPresenter!!.GetPoints(canvas!!)
         super.onDraw(canvas)
     }
+
+
 
 
 

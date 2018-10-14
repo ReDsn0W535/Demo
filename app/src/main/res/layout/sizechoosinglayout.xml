@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_weight="30"
-        android:inputType="textPersonName"
+        android:inputType="numberSigned"
         android:text="256" />
 
 
@@ -32,6 +32,6 @@
         android:layout_gravity="end"
         android:layout_marginRight="15dp"
         android:layout_weight="30"
-        android:inputType="textPersonName"
+        android:inputType="numberSigned"
         android:text="256" />
 </LinearLayout>

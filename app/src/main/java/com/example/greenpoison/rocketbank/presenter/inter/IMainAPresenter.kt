@@ -5,5 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Point
 
 interface IMainAPresenter{
-    fun GetPoints(canvas: Canvas)
+    fun GetPoints(canvas: Canvas, DRAW_PERMISSION : Boolean)
+    fun SetDrawViewSize()
 }

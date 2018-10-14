@@ -9,6 +9,9 @@ import com.example.greenpoison.rocketbank.presenter.inter.IMainAPresenter
 import com.example.greenpoison.rocketbank.view.inter.IMainAView
 
 class MainAPresenterImpl(private val mIMainAView: IMainAView) : IMainAPresenter {
+    override fun SetDrawViewSize() {
+
+    }
 
     private val mIMainAModel: IMainAModel
 
@@ -16,8 +19,8 @@ class MainAPresenterImpl(private val mIMainAView: IMainAView) : IMainAPresenter 
         mIMainAModel = MainAModelImpl()
     }
 
-    override fun GetPoints(canvas: Canvas)  {
-        (mIMainAModel as MainAModelImpl).DrawRandPoints(canvas)
+    override fun GetPoints(canvas: Canvas, DRAW_PERMISSION : Boolean)  {
+        (mIMainAModel as MainAModelImpl).DrawRandPoints(canvas, DRAW_PERMISSION)
     }
 
 }

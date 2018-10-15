@@ -1,7 +1,8 @@
 package com.example.greenpoison.rocketbank.presenter.callback
 
-interface CallBack<T> {
-    fun onSuccess(response: T)
+import android.app.DownloadManager
+import javax.security.auth.callback.Callback
 
-    fun onError(t: Throwable)
+interface CallBack {
+    fun RequestView()
 }

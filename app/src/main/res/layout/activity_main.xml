@@ -47,17 +47,20 @@
                     android:id="@+id/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="Size" />
 
                 <Button
                     android:id="@+id/button2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="Generate" />
 
                 <SeekBar
                     android:id="@+id/seekBar2"
                     android:layout_width="match_parent"
+                    android:layout_gravity="center"
                     android:layout_height="match_parent" />
             </LinearLayout>
         </LinearLayout>

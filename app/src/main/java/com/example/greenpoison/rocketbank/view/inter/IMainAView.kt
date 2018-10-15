@@ -2,10 +2,10 @@ package com.example.greenpoison.rocketbank.view.inter
 
 interface IMainAView {
 
-    fun <T> request(requestFlag: Int): T?
+    /*fun <T> request(requestFlag: Int): T?
 
-    fun <T> response(response: T, responseFlag: Int)
-
+    fun <T> response(response: T, responseFlag: Int)*/
+    fun RequestView()
     companion object {
 
         val REQUEST_ONE = 0

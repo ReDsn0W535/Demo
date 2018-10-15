@@ -4,16 +4,20 @@ import android.graphics.*
 import android.util.Log
 import android.widget.Toast
 import com.example.greenpoison.rocketbank.model.inter.IMainAModel
+import com.example.greenpoison.rocketbank.presenter.callback.CallBack
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.RandomAccess
+import kotlin.concurrent.thread
 import kotlin.math.*
 
 class MainAModelImpl : IMainAModel {
-    // var IS_CALLED_FIRST_TIME = false
+    fun registerCallback(callback : CallBack){
+        this.mCallBack = callback
+    }
     var points1 = ArrayList<Point>(0)
     var points2 = ArrayList<Point>(0)
-
+    lateinit var  mCallBack : CallBack
     var p = Paint()
     var PointsStack = Stack<Point>()
     override fun FillSeed(bitmap: Bitmap, x: Int, y: Int) {
@@ -23,15 +27,15 @@ class MainAModelImpl : IMainAModel {
         }
         PointsStack.push(Point(x, y))
         FillPoints(bitmap)
-
+        mCallBack.RequestView()
     }
 
 
     fun FillPoints(bitmap: Bitmap) {
         if (PointsStack.size == 0) return
         var cur_point = PointsStack.pop()
-        Log.e("FILL POINTS TAG", "x = ${cur_point.x}, y = ${cur_point.y}, color = ${bitmap.getPixel(cur_point.x, cur_point.y)}")
-        Log.e("FILL POINTS TAG", "Black = ${Color.BLACK}, CUR_COLOR = ${bitmap.getPixel(cur_point.x, cur_point.y)}")
+       // Log.e("FILL POINTS TAG", "x = ${cur_point.x}, y = ${cur_point.y}, color = ${bitmap.getPixel(cur_point.x, cur_point.y)}")
+       // Log.e("FILL POINTS TAG", "Black = ${Color.BLACK}, CUR_COLOR = ${bitmap.getPixel(cur_point.x, cur_point.y)}")
         bitmap.setPixel(cur_point.x, cur_point.y, Color.RED)
         if (cur_point.x != bitmap.width - 1) {
             if (bitmap.getPixel(cur_point.x + 1, cur_point.y) == (Color.BLACK)) {
@@ -69,8 +73,8 @@ class MainAModelImpl : IMainAModel {
             while (j < bitmap.height - 1) {
                 var rand = (0..100).random()
                 if (rand * 100 > 70) {
-                    for (x in i..i + 30) {
-                        for (y in j..j + 30) {
+                    for (x in i..i + 29) {
+                        for (y in j..j + 29) {
                             bitmap.setPixel(x, y, Color.BLACK)
                             if (y == bitmap.height - 1) break
                         }

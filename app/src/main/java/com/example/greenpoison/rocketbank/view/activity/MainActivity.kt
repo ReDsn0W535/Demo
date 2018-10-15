@@ -19,30 +19,26 @@ import com.example.greenpoison.rocketbank.view.inter.IMainAView
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.util.Log
+import com.example.greenpoison.rocketbank.model.inter.IMainAModel
+import com.example.greenpoison.rocketbank.presenter.callback.CallBack
 
 
 enum class Action { FIRST_DRAW, SEEDALG, XORALG, INDEFINITELY, RESTORE }
 
 var mIMainAPresenter: IMainAPresenter? = null
 
-class MainActivity : AppCompatActivity(), IMainAView {
+class MainActivity : AppCompatActivity() {
+
+
     lateinit var dialog: AlertDialog
     lateinit var drawView1: DrawView
     lateinit var drawView2: DrawView
     lateinit var spinner1: Spinner
     lateinit var spinner2: Spinner
-    override fun <T> request(requestFlag: Int): T? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun <T> response(response: T, responseFlag: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mIMainAPresenter = MainAPresenterImpl(this)
         setContentView(R.layout.activity_main)
         drawView1 = findViewById(R.id.drawView)
         drawView1.set_number(1)
@@ -52,7 +48,7 @@ class MainActivity : AppCompatActivity(), IMainAView {
         spinner2 = findViewById(R.id.spinner2)
 
 
-        val itemSelectedListener1 = object : OnItemSelectedListener     {
+        val itemSelectedListener1 = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
                 val item = parent.getItemAtPosition(position) as String
@@ -123,19 +119,18 @@ class MainActivity : AppCompatActivity(), IMainAView {
             d.dismiss()
         }
     }
-
-    override fun onRestart() {
-        drawView1.set_action(Action.RESTORE)
-        drawView2.set_action(Action.RESTORE)
-        super.onRestart()
-    }
 }
 
-class DrawView : ImageView {
+class DrawView : ImageView, IMainAView {
+    override fun RequestView() {
+        invalidate()
+    }
+
     private var number: Int = 0
     private var cur_action: Action = Action.INDEFINITELY
     private var FillType: Action? = Action.SEEDALG
-    private lateinit var drawBitmap : Bitmap
+    private lateinit var drawBitmap: Bitmap
+    private var IS_BITMAP_CREATED = false
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -156,10 +151,18 @@ class DrawView : ImageView {
     }
 
     override fun onDraw(canvas: Canvas?) {
-        drawBitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
+        if (mIMainAPresenter == null) mIMainAPresenter = MainAPresenterImpl(this)
+        if (IS_BITMAP_CREATED == false) {
+            drawBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            IS_BITMAP_CREATED = true
+        }
+        if (cur_action == Action.RESTORE) canvas?.drawBitmap(drawBitmap, 0F, 0F, Paint())
+        if (cur_action == Action.FIRST_DRAW) {
+            drawBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        }
         mIMainAPresenter?.Draw(drawBitmap, number, cur_action)
         if (canvas != null) {
-            canvas.drawBitmap(drawBitmap,0F,0F, Paint())
+            canvas.drawBitmap(drawBitmap, 0F, 0F, Paint())
         }
         cur_action = Action.INDEFINITELY
         super.onDraw(canvas)
@@ -172,4 +175,6 @@ class DrawView : ImageView {
         }
         return super.onTouchEvent(event)
     }
+
+
 }

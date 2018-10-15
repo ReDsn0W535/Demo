@@ -6,10 +6,8 @@ import android.support.v7.app.AlertDialog
 import android.widget.Toast
 import com.example.greenpoison.rocketbank.R
 
-class DialogScreen{
-    fun getDialog(activity : Activity) : AlertDialog{
-
-
+class DialogScreen {
+    fun getDialog(activity: Activity): AlertDialog {
 
 
         val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
@@ -22,7 +20,6 @@ class DialogScreen{
         }
 
 
-
         val builder = AlertDialog.Builder(activity)
         var inflater = activity.layoutInflater
 
@@ -31,6 +28,6 @@ class DialogScreen{
                 .setNegativeButton("Cancel", dialogClickListener)
                 .setPositiveButton("OK", dialogClickListener)
                 .setView(inflater.inflate(R.layout.sizechoosinglayout, null))
-        return  builder.create()
+        return builder.create()
     }
 }

@@ -3,4 +3,11 @@
     <string name="generate">Generate</string>
     <string name="size">Size</string>
     <string name="name">Name</string>
+
+
+
+    <string-array name="FillMethods">
+        <item>Алгоритм закраски с затравкой</item>
+        <item>Построчная XOR-обработка</item>
+    </string-array>
 </resources>

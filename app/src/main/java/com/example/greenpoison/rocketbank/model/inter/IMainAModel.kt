@@ -5,5 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Point
 
 interface IMainAModel{
-    fun DrawRandPoints(canvas: Canvas, DRAW_PERMISSION : Boolean)
+    fun DrawRandPoints(bitmap: Bitmap, number : Int)
+    fun RestorePoints(bitmap: Bitmap, number : Int)
+    fun FillSeed(bitmap: Bitmap, x: Int, y : Int)
 }

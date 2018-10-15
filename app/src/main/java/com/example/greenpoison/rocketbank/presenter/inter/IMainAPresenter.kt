@@ -2,9 +2,10 @@ package com.example.greenpoison.rocketbank.presenter.inter
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Point
+import com.example.greenpoison.rocketbank.view.activity.Action
 
 interface IMainAPresenter{
-    fun GetPoints(canvas: Canvas, DRAW_PERMISSION : Boolean)
+    fun Draw(bitmap: Bitmap, number : Int, cur_action : Action)
     fun SetDrawViewSize()
+    fun Fill(bitmap: Bitmap, x : Int, y : Int, cur_action : Action)
 }

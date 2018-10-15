@@ -1,34 +1,36 @@
 package com.example.greenpoison.rocketbank.view.activity
 
-import android.app.PendingIntent.getActivity
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
-import android.widget.Toast
+import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
 import com.example.greenpoison.rocketbank.R
 import com.example.greenpoison.rocketbank.presenter.impl.MainAPresenterImpl
 import com.example.greenpoison.rocketbank.presenter.inter.IMainAPresenter
-import com.example.greenpoison.rocketbank.view.inter.IMainAView
-import android.content.DialogInterface.OnClickListener
-import android.util.Log
-import android.util.TypedValue
-import android.view.LayoutInflater
-import android.widget.EditText
 import com.example.greenpoison.rocketbank.view.fragment.DialogScreen
+import com.example.greenpoison.rocketbank.view.inter.IMainAView
+import android.graphics.Bitmap
+import android.graphics.Paint
+import android.util.Log
 
-var PERMISSION_OBTAINED = false
+
+enum class Action { FIRST_DRAW, SEEDALG, XORALG, INDEFINITELY, RESTORE }
+
 var mIMainAPresenter: IMainAPresenter? = null
-class MainActivity : AppCompatActivity(), IMainAView {
-    lateinit var dialog : AlertDialog
-    lateinit var drawView1 : DrawView
-    lateinit var drawView2 : DrawView
 
+class MainActivity : AppCompatActivity(), IMainAView {
+    lateinit var dialog: AlertDialog
+    lateinit var drawView1: DrawView
+    lateinit var drawView2: DrawView
+    lateinit var spinner1: Spinner
+    lateinit var spinner2: Spinner
     override fun <T> request(requestFlag: Int): T? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -38,20 +40,51 @@ class MainActivity : AppCompatActivity(), IMainAView {
     }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mIMainAPresenter = MainAPresenterImpl(this)
         setContentView(R.layout.activity_main)
         drawView1 = findViewById(R.id.drawView)
+        drawView1.set_number(1)
         drawView2 = findViewById(R.id.drawView2)
+        drawView2.set_number(2)
+        spinner1 = findViewById(R.id.spinner)
+        spinner2 = findViewById(R.id.spinner2)
+
+
+        val itemSelectedListener1 = object : OnItemSelectedListener     {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+
+                val item = parent.getItemAtPosition(position) as String
+                drawView1.setFillType(item)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
+        val itemSelectedListener2 = object : OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+
+                val item = parent.getItemAtPosition(position) as String
+                drawView1.setFillType(item)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
+
+
+        spinner1.onItemSelectedListener = itemSelectedListener1
+        spinner2.onItemSelectedListener = itemSelectedListener2
         var sizeButton = findViewById<Button>(R.id.button)
         sizeButton.setOnClickListener(oclBtnOk)
         var generateButton = findViewById<Button>(R.id.button2)
         generateButton.setOnClickListener(printPicture)
     }
 
-    var oclBtnOk: View.OnClickListener = object : View.OnClickListener{
+    var oclBtnOk: View.OnClickListener = object : View.OnClickListener {
         override fun onClick(v: View) {
             dialog = DialogScreen().getDialog(this@MainActivity)
             dialog.show()
@@ -59,17 +92,19 @@ class MainActivity : AppCompatActivity(), IMainAView {
         }
 
     }
-    var printPicture: View.OnClickListener = object : View.OnClickListener{
+    var printPicture: View.OnClickListener = object : View.OnClickListener {
         override fun onClick(v: View?) {
-            PERMISSION_OBTAINED = true
+            drawView1.set_action(Action.FIRST_DRAW)
             drawView1.invalidate()
+            drawView2.set_action(Action.FIRST_DRAW)
             drawView2.invalidate()
-            //PERMISSION_OBTAINED = false
+
         }
     }
-    fun initSettings(d : AlertDialog){
+
+    fun initSettings(d: AlertDialog) {
         var button = d.getButton(AlertDialog.BUTTON_POSITIVE)
-        button.setOnClickListener{
+        button.setOnClickListener {
             var new_h = d.findViewById<EditText>(R.id.editHeight)?.text.toString().toInt()
             var new_w = d.findViewById<EditText>(R.id.editWidth)?.text.toString().toInt()
             var params = drawView1.layoutParams
@@ -80,36 +115,61 @@ class MainActivity : AppCompatActivity(), IMainAView {
             params.width = new_w
             params.height = new_h
             drawView1.requestLayout()
-            Log.e("MAIN TAG", "${new_h},    ${new_w}")
+            // Log.e("MAIN TAG", "${new_h},    ${new_w}")
             d.dismiss()
         }
         var button2 = d.getButton(AlertDialog.BUTTON_NEGATIVE)
-        button2.setOnClickListener{
+        button2.setOnClickListener {
             d.dismiss()
         }
     }
 
+    override fun onRestart() {
+        drawView1.set_action(Action.RESTORE)
+        drawView2.set_action(Action.RESTORE)
+        super.onRestart()
+    }
 }
 
-class DrawView: View, IMainAView {
-
-    override fun <T> request(requestFlag: Int): T? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun <T> response(response: T, responseFlag: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+class DrawView : ImageView {
+    private var number: Int = 0
+    private var cur_action: Action = Action.INDEFINITELY
+    private var FillType: Action? = Action.SEEDALG
+    private lateinit var drawBitmap : Bitmap
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
+    fun set_action(action: Action) {
+        cur_action = action
+    }
+
+    fun set_number(i: Int) {
+        number = i
+    }
+
+    fun setFillType(type: String) {
+        if (type == "Алгоритм закраски с затравкой") FillType = Action.SEEDALG
+        if (type == "Построчная XOR-обработка") FillType = Action.XORALG
+    }
 
     override fun onDraw(canvas: Canvas?) {
-        if (PERMISSION_OBTAINED == true)
-            mIMainAPresenter!!.GetPoints(canvas!!, false)
+        drawBitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
+        mIMainAPresenter?.Draw(drawBitmap, number, cur_action)
+        if (canvas != null) {
+            canvas.drawBitmap(drawBitmap,0F,0F, Paint())
+        }
+        cur_action = Action.INDEFINITELY
         super.onDraw(canvas)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        Log.e("Touch LOG", "x = ${event?.x?.toInt()}, y = ${event?.y?.toInt()}")
+        if (event != null && FillType != null) {
+            mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(), FillType!!)
+        }
+        return super.onTouchEvent(event)
     }
 }

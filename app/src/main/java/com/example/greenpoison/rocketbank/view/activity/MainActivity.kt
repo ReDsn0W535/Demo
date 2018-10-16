@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), IMainAView {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 // TODO Auto-generated method stub
 
-                sleepTime -= progress
+                sleepTime = 20 - progress
             }
         })
         val toast = Toast.makeText(applicationContext,

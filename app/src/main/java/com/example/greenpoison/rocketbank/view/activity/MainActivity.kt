@@ -203,9 +203,11 @@ class DrawView : ImageView {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.e("Touch LOG", "x = ${event?.x?.toInt()}, y = ${event?.y?.toInt()}")
-        if (event != null && FillType != null) {
-            mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(), this.number, FillType!!, sleepTime)
+        if (event?.x?.toInt()!! < drawBitmap.width && event?.y?.toInt()!! < drawBitmap.height) {
+            Log.e("Touch LOG", "x = ${event?.x?.toInt()}, y = ${event?.y?.toInt()}")
+            if (event != null && FillType != null) {
+                mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(), this.number, FillType!!, sleepTime)
+            }
         }
         return super.onTouchEvent(event)
     }

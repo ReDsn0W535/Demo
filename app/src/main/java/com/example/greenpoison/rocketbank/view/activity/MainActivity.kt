@@ -206,6 +206,7 @@ class DrawView : ImageView {
         if (event?.x?.toInt()!! < drawBitmap.width && event?.y?.toInt()!! < drawBitmap.height) {
             Log.e("Touch LOG", "x = ${event?.x?.toInt()}, y = ${event?.y?.toInt()}")
             if (event != null && FillType != null) {
+                if (sleepTime < 0) sleepTime = 0
                 mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(), this.number, FillType!!, sleepTime)
             }
         }

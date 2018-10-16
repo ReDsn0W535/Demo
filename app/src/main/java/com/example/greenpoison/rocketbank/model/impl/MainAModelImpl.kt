@@ -27,7 +27,7 @@ class MainAModelImpl : IMainAModel {
             }
             var cur_point = PointsDeque.pollFirst()
             bitmap.setPixel(cur_point.x, cur_point.y, Color.RED)
-            Thread.sleep((20+sleepTime).toLong())
+            Thread.sleep((sleepTime).toLong())
             if (cur_point.y != bitmap.height - 1) {
                 if (bitmap.getPixel(cur_point.x, cur_point.y + 1) == Color.BLACK) {
                     PointsDeque.addLast(Point(cur_point.x, cur_point.y + 1))
@@ -139,7 +139,7 @@ class MainAModelImpl : IMainAModel {
             }
             var cur_point = PointsStack.pop()
             bitmap.setPixel(cur_point.x, cur_point.y, Color.RED)
-            Thread.sleep((20+sleepTime).toLong())
+            Thread.sleep((sleepTime).toLong())
             if (cur_point.x != bitmap.width - 1) {
                 if (bitmap.getPixel(cur_point.x + 1, cur_point.y) == (Color.BLACK)) {
                     PointsStack.push(Point(cur_point.x + 1, cur_point.y))

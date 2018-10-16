@@ -30,7 +30,7 @@ enum class Action { FIRST_DRAW, SEEDALG, XORALG, INDEFINITELY, RESTORE }
 var mIMainAPresenter: IMainAPresenter? = null
 lateinit var sizeButton: Button
 lateinit var generateButton: Button
-var sleepTime : Int = 0
+var sleepTime : Int = 20
 
 
 class MainActivity : AppCompatActivity(), IMainAView {
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), IMainAView {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 // TODO Auto-generated method stub
 
-                sleepTime = progress
+                sleepTime -= progress
             }
         })
         val toast = Toast.makeText(applicationContext,

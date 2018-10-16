@@ -1,12 +1,14 @@
 package com.example.greenpoison.rocketbank.view.activity
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.Drawable
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
@@ -16,18 +18,22 @@ import com.example.greenpoison.rocketbank.presenter.impl.MainAPresenterImpl
 import com.example.greenpoison.rocketbank.presenter.inter.IMainAPresenter
 import com.example.greenpoison.rocketbank.view.fragment.DialogScreen
 import com.example.greenpoison.rocketbank.view.inter.IMainAView
-import android.graphics.Bitmap
-import android.graphics.Paint
-import android.util.Log
-import com.example.greenpoison.rocketbank.model.inter.IMainAModel
-import com.example.greenpoison.rocketbank.presenter.callback.CallBack
+import android.widget.Toast
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+
+
 
 
 enum class Action { FIRST_DRAW, SEEDALG, XORALG, INDEFINITELY, RESTORE }
 
 var mIMainAPresenter: IMainAPresenter? = null
+lateinit var sizeButton: Button
+lateinit var generateButton: Button
+var sleepTime : Int = 0
 
-class MainActivity : AppCompatActivity(), IMainAView  {
+
+class MainActivity : AppCompatActivity(), IMainAView {
 
 
     lateinit var dialog: AlertDialog
@@ -35,14 +41,14 @@ class MainActivity : AppCompatActivity(), IMainAView  {
     lateinit var drawView2: DrawView
     lateinit var spinner1: Spinner
     lateinit var spinner2: Spinner
-    lateinit var sizeButton : Button
-    lateinit var generateButton : Button
-    override fun RequestView(number :Int) {
-        if (number == 1){
-            drawView1.postInvalidate()
-        }
-        else drawView2.postInvalidate()
+    lateinit var seekBar: SeekBar
+    override fun RequestView(number: Int) {
+        if (this != null)
+            if (number == 1) {
+                drawView1.postInvalidate()
+            } else drawView2.postInvalidate()
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +60,26 @@ class MainActivity : AppCompatActivity(), IMainAView  {
         drawView2.set_number(2)
         spinner1 = findViewById(R.id.spinner)
         spinner2 = findViewById(R.id.spinner2)
+        seekBar = findViewById(R.id.seekBar2)
+        seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                // TODO Auto-generated method stub
+
+                sleepTime = progress
+            }
+        })
+        val toast = Toast.makeText(applicationContext,
+                "Не нажимайте на кнопку generate во время отрисовки изображения, это может привести к неправильной работе программы.", Toast.LENGTH_SHORT)
+        toast.show()
         val itemSelectedListener1 = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
@@ -101,12 +126,13 @@ class MainActivity : AppCompatActivity(), IMainAView  {
         drawView2.set_action(Action.FIRST_DRAW)
         drawView2.invalidate()
     }
+
     override fun SetGenButtonNonCLickable() {
-//        generateButton.isEnabled = false
+        generateButton.isEnabled = false
     }
 
     override fun SetGenButtonCLickable() {
-    //    generateButton.isEnabled = true
+        generateButton.isEnabled = true
     }
 
     fun initSettings(d: AlertDialog) {
@@ -132,12 +158,13 @@ class MainActivity : AppCompatActivity(), IMainAView  {
     }
 }
 
-class DrawView : ImageView{
+class DrawView : ImageView {
 
     private var number: Int = 0
     private var cur_action: Action = Action.INDEFINITELY
     private var FillType: Action? = Action.SEEDALG
-    @Volatile private lateinit var drawBitmap: Bitmap
+    @Volatile
+    private lateinit var drawBitmap: Bitmap
     private var IS_BITMAP_CREATED = false
 
     constructor(context: Context?) : super(context)
@@ -178,7 +205,7 @@ class DrawView : ImageView{
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         Log.e("Touch LOG", "x = ${event?.x?.toInt()}, y = ${event?.y?.toInt()}")
         if (event != null && FillType != null) {
-            mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(),this.number ,FillType!!)
+            mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(), this.number, FillType!!, sleepTime)
         }
         return super.onTouchEvent(event)
     }

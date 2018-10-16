@@ -17,13 +17,35 @@ class MainAPresenterImpl(private val mIMainAView: IMainAView) : IMainAPresenter,
     override fun SetGenButtonCLickable() {
         mIMainAView.SetGenButtonCLickable()
     }
-    override fun Fill(bitmap: Bitmap, x: Int, y: Int, number: Int, cur_action : Action) {
-        if (cur_action == Action.SEEDALG){
-            if (number == 1)thread(true, name = "FillSeedThread1") { mIMainAModel1.FillSeed(bitmap, x, y, number)}
-            if (number == 2)thread(true, name = "FillSeedThread2") { mIMainAModel2.FillSeed(bitmap, x, y, number)}
-        } else if (cur_action == Action.XORALG){
-            if (number == 1)thread(true, name = "XORThread1") { mIMainAModel1.FillXOR(bitmap, x, y, number)}
-            if (number == 2)thread(true, name = "XORThread2") { mIMainAModel2.FillXOR(bitmap, x, y, number)}
+
+    lateinit var mCallBack: CallBack
+    fun registerCallback(callback: CallBack) {
+        this.mCallBack = callback
+    }
+
+    override fun Fill(bitmap: Bitmap, x: Int, y: Int, number: Int, cur_action: Action, sleepTime : Int) {
+        if (cur_action == Action.SEEDALG) {
+            if (number == 1) {
+                mCallBack.SetGenButtonNonCLickable()
+                thread(true, name = "FillSeedThread1") { mIMainAModel1.FillSeed(bitmap, x, y, number, sleepTime) }
+                mCallBack.SetGenButtonCLickable()
+            }
+            if (number == 2) {
+                mCallBack.SetGenButtonNonCLickable()
+                thread(true, name = "FillSeedThread2") { mIMainAModel2.FillSeed(bitmap, x, y, number, sleepTime) }
+                mCallBack.SetGenButtonCLickable()
+            }
+        } else if (cur_action == Action.XORALG) {
+            if (number == 1) {
+                mCallBack.SetGenButtonNonCLickable()
+                thread(true, name = "XORThread1") { mIMainAModel1.FillXOR(bitmap, x, y, number, sleepTime) }
+                mCallBack.SetGenButtonCLickable()
+            }
+            if (number == 2) {
+                mCallBack.SetGenButtonNonCLickable()
+                thread(true, name = "XORThread2") { mIMainAModel2.FillXOR(bitmap, x, y, number, sleepTime) }
+                mCallBack.SetGenButtonCLickable()
+            }
         }
     }
 
@@ -35,9 +57,10 @@ class MainAPresenterImpl(private val mIMainAView: IMainAView) : IMainAPresenter,
         mIMainAModel1.registerCallback(this)
         mIMainAModel2 = MainAModelImpl()
         mIMainAModel2.registerCallback(this)
+        registerCallback(this)
     }
 
-    override fun Draw(bitmap: Bitmap, number : Int, cur_action : Action)  {
+    override fun Draw(bitmap: Bitmap, number: Int, cur_action: Action) {
         if (cur_action == Action.FIRST_DRAW && number == 1) {
 
             mIMainAModel1.DrawRandPoints(bitmap, number)

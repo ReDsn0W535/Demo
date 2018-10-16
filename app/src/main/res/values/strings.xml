@@ -8,6 +8,6 @@
 
     <string-array name="FillMethods">
         <item>Алгоритм закраски с затравкой</item>
-        <item>Построчная XOR-обработка</item>
+        <item>Горизонтальная обработка очередью</item>
     </string-array>
 </resources>

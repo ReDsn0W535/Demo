@@ -27,7 +27,7 @@ enum class Action { FIRST_DRAW, SEEDALG, XORALG, INDEFINITELY, RESTORE }
 
 var mIMainAPresenter: IMainAPresenter? = null
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IMainAView  {
 
 
     lateinit var dialog: AlertDialog
@@ -35,10 +35,18 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawView2: DrawView
     lateinit var spinner1: Spinner
     lateinit var spinner2: Spinner
-
+    lateinit var sizeButton : Button
+    lateinit var generateButton : Button
+    override fun RequestView(number :Int) {
+        if (number == 1){
+            drawView1.postInvalidate()
+        }
+        else drawView2.postInvalidate()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (mIMainAPresenter == null) mIMainAPresenter = MainAPresenterImpl(this)
         setContentView(R.layout.activity_main)
         drawView1 = findViewById(R.id.drawView)
         drawView1.set_number(1)
@@ -46,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         drawView2.set_number(2)
         spinner1 = findViewById(R.id.spinner)
         spinner2 = findViewById(R.id.spinner2)
-
 
         val itemSelectedListener1 = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
@@ -74,9 +81,9 @@ class MainActivity : AppCompatActivity() {
 
         spinner1.onItemSelectedListener = itemSelectedListener1
         spinner2.onItemSelectedListener = itemSelectedListener2
-        var sizeButton = findViewById<Button>(R.id.button)
+        sizeButton = findViewById(R.id.button)
         sizeButton.setOnClickListener(oclBtnOk)
-        var generateButton = findViewById<Button>(R.id.button2)
+        generateButton = findViewById(R.id.button2)
         generateButton.setOnClickListener(printPicture)
     }
 
@@ -88,14 +95,18 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-    var printPicture: View.OnClickListener = object : View.OnClickListener {
-        override fun onClick(v: View?) {
-            drawView1.set_action(Action.FIRST_DRAW)
-            drawView1.invalidate()
-            drawView2.set_action(Action.FIRST_DRAW)
-            drawView2.invalidate()
+    var printPicture: View.OnClickListener = View.OnClickListener {
+        drawView1.set_action(Action.FIRST_DRAW)
+        drawView1.invalidate()
+        drawView2.set_action(Action.FIRST_DRAW)
+        drawView2.invalidate()
+    }
+    override fun SetGenButtonNonCLickable() {
+//        generateButton.isEnabled = false
+    }
 
-        }
+    override fun SetGenButtonCLickable() {
+    //    generateButton.isEnabled = true
     }
 
     fun initSettings(d: AlertDialog) {
@@ -121,15 +132,12 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class DrawView : ImageView, IMainAView {
-    override fun RequestView() {
-        invalidate()
-    }
+class DrawView : ImageView{
 
     private var number: Int = 0
     private var cur_action: Action = Action.INDEFINITELY
     private var FillType: Action? = Action.SEEDALG
-    private lateinit var drawBitmap: Bitmap
+    @Volatile private lateinit var drawBitmap: Bitmap
     private var IS_BITMAP_CREATED = false
 
     constructor(context: Context?) : super(context)
@@ -151,18 +159,17 @@ class DrawView : ImageView, IMainAView {
     }
 
     override fun onDraw(canvas: Canvas?) {
-        if (mIMainAPresenter == null) mIMainAPresenter = MainAPresenterImpl(this)
         if (IS_BITMAP_CREATED == false) {
-            drawBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            this.drawBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             IS_BITMAP_CREATED = true
         }
-        if (cur_action == Action.RESTORE) canvas?.drawBitmap(drawBitmap, 0F, 0F, Paint())
+        if (cur_action == Action.RESTORE) canvas?.drawBitmap(this.drawBitmap, 0F, 0F, Paint())
         if (cur_action == Action.FIRST_DRAW) {
             drawBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         }
-        mIMainAPresenter?.Draw(drawBitmap, number, cur_action)
+        mIMainAPresenter?.Draw(this.drawBitmap, this.number, cur_action)
         if (canvas != null) {
-            canvas.drawBitmap(drawBitmap, 0F, 0F, Paint())
+            canvas.drawBitmap(this.drawBitmap, 0F, 0F, Paint())
         }
         cur_action = Action.INDEFINITELY
         super.onDraw(canvas)
@@ -171,7 +178,7 @@ class DrawView : ImageView, IMainAView {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         Log.e("Touch LOG", "x = ${event?.x?.toInt()}, y = ${event?.y?.toInt()}")
         if (event != null && FillType != null) {
-            mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(), FillType!!)
+            mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(),this.number ,FillType!!)
         }
         return super.onTouchEvent(event)
     }

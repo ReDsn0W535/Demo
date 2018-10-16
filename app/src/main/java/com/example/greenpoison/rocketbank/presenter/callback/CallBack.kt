@@ -4,5 +4,7 @@ import android.app.DownloadManager
 import javax.security.auth.callback.Callback
 
 interface CallBack {
-    fun RequestView()
+    fun RequestView(number: Int)
+    fun SetGenButtonNonCLickable()
+    fun SetGenButtonCLickable()
 }

@@ -5,7 +5,9 @@ interface IMainAView {
     /*fun <T> request(requestFlag: Int): T?
 
     fun <T> response(response: T, responseFlag: Int)*/
-    fun RequestView()
+    fun RequestView(number : Int)
+    fun SetGenButtonNonCLickable()
+    fun SetGenButtonCLickable()
     companion object {
 
         val REQUEST_ONE = 0

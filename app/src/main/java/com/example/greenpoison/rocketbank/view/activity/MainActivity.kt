@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -23,19 +24,22 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 
 
-
-
 enum class Action { FIRST_DRAW, SEEDALG, XORALG, INDEFINITELY, RESTORE }
 
 var mIMainAPresenter: IMainAPresenter? = null
 lateinit var sizeButton: Button
 lateinit var generateButton: Button
-var sleepTime : Int = 20
+var sleepTime: Int = 20
 
 
 class MainActivity : AppCompatActivity(), IMainAView {
+    override fun GetTaskStatus(status: String, number: Int) {
+        if (number == 1) status1 = status
+        else if (number == 2) status2 = status
+    }
 
-
+    var status1: String = "FINISHED"
+    var status2: String = "FINISHED"
     lateinit var dialog: AlertDialog
     lateinit var drawView1: DrawView
     lateinit var drawView2: DrawView
@@ -129,10 +133,14 @@ class MainActivity : AppCompatActivity(), IMainAView {
 
     override fun SetGenButtonNonCLickable() {
         generateButton.isEnabled = false
+        sizeButton.isEnabled = false
     }
 
     override fun SetGenButtonCLickable() {
-        generateButton.isEnabled = true
+        if (status1 == "FINISHED" && status2 == "FINISHED") {
+            generateButton.isEnabled = true
+            sizeButton.isEnabled = true
+        }
     }
 
     fun initSettings(d: AlertDialog) {

@@ -1,13 +1,12 @@
 package com.example.greenpoison.rocketbank.view.inter
 
+import android.os.AsyncTask
+
 interface IMainAView {
-
-    /*fun <T> request(requestFlag: Int): T?
-
-    fun <T> response(response: T, responseFlag: Int)*/
     fun RequestView(number : Int)
     fun SetGenButtonNonCLickable()
     fun SetGenButtonCLickable()
+    fun GetTaskStatus(status: String, number : Int)
     companion object {
 
         val REQUEST_ONE = 0

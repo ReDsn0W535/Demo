@@ -28,17 +28,6 @@ class MainAModelImpl : IMainAModel {
             var cur_point = PointsDeque.pollFirst()
             bitmap.setPixel(cur_point.x, cur_point.y, Color.RED)
             Thread.sleep((sleepTime).toLong())
-            if (cur_point.y != bitmap.height - 1) {
-                if (bitmap.getPixel(cur_point.x, cur_point.y + 1) == Color.BLACK) {
-                    PointsDeque.addLast(Point(cur_point.x, cur_point.y + 1))
-                }
-            }
-
-            if (cur_point.y != 0) {
-                if (bitmap.getPixel(cur_point.x, cur_point.y - 1) == Color.BLACK) {
-                    PointsDeque.addLast(Point(cur_point.x, cur_point.y - 1))
-                }
-            }
             if (cur_point.x != bitmap.width - 1) {
                 if (bitmap.getPixel(cur_point.x + 1, cur_point.y) == (Color.BLACK)) {
                     PointsDeque.addLast(Point(cur_point.x + 1, cur_point.y))
@@ -50,32 +39,19 @@ class MainAModelImpl : IMainAModel {
                     PointsDeque.addLast(Point(cur_point.x - 1, cur_point.y))
                 }
             }
+            if (cur_point.y != bitmap.height - 1) {
+                if (bitmap.getPixel(cur_point.x, cur_point.y + 1) == Color.BLACK) {
+                    PointsDeque.addLast(Point(cur_point.x, cur_point.y + 1))
+                }
+            }
+
+            if (cur_point.y != 0) {
+                if (bitmap.getPixel(cur_point.x, cur_point.y - 1) == Color.BLACK) {
+                    PointsDeque.addLast(Point(cur_point.x, cur_point.y - 1))
+                }
+            }
             FillPointsRecursive(bitmap, sleepTime)
         }
-        /* var startPoint = Point(x,y)
-         var top = startPoint
-         var bottom= startPoint
-         var left = startPoint
-         var right = startPoint
-         while (bitmap.getPixel(top.x,top.y+1) != Color.WHITE && y != bitmap.height-1){
-             top.y++
-         }
-         while (bitmap.getPixel(bottom.x,bottom.y-1) != Color.WHITE && y != 0){
-             bottom.y--
-         }
-         while (bitmap.getPixel(left.x-1,left.y) != Color.WHITE && x!= 0){
-             left.x--
-         }
-         while (bitmap.getPixel(right.x+1,right.y) != Color.WHITE && x != bitmap.height-1){
-             right.x++
-         }
-         for (i in left.x..right.x) bitmap.setPixel(i,right.y,Color.RED)
-         for (i in bottom.y..top.y) bitmap.setPixel(bottom.x,right.y,Color.RED)
-
-         for (i in left.x..right.x) {
-             bitmap.setPixel(i, left.x, Color.RED)
-
-         }*/
         IS_ENDED = true
         STOP_ASYNC = true
     }
@@ -103,28 +79,30 @@ class MainAModelImpl : IMainAModel {
     }
 
     internal inner class MyTask : AsyncTask<Void, Void, Void>() {
-
         override fun doInBackground(vararg params: Void?): Void? {
             var async_number = cur_number
+            mCallBack.GetTaskStatus("RUNNING", async_number)
             while (true) {
                 if (async_number == -1) break
                 mCallBack.RequestView(1)
                 mCallBack.RequestView(2)
                 Thread.sleep(10)
                 Log.e("ASYNC TASK", "I am working with number: $async_number")
-        //        if (STOP_ASYNC) break
+                if (STOP_ASYNC) break
             }
             return null
         }
 
         override fun onPostExecute(result: Void?) {
+            mCallBack.GetTaskStatus("FINISHED", cur_number)
             mCallBack.SetGenButtonCLickable()
             super.onPostExecute(result)
         }
 
         override fun onCancelled() {
-            mCallBack.RequestView(cur_number)
             super.onCancelled()
+            mCallBack.RequestView(cur_number)
+
         }
     }
 
@@ -169,7 +147,7 @@ class MainAModelImpl : IMainAModel {
     }
 
     override fun DrawRandPoints(bitmap: Bitmap, number: Int) {
-        this.rTask = MyTask().execute() as MyTask
+        //this.rTask = MyTask().execute() as MyTask
         var points = ArrayList<Point>(0)
         var i = 0
         var j = 0

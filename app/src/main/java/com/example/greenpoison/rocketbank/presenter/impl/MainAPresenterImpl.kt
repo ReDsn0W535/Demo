@@ -1,6 +1,7 @@
 package com.example.greenpoison.rocketbank.presenter.impl
 
 import android.graphics.Bitmap
+import android.os.AsyncTask
 import com.example.greenpoison.rocketbank.model.impl.MainAModelImpl
 import com.example.greenpoison.rocketbank.model.inter.IMainAModel
 import com.example.greenpoison.rocketbank.presenter.callback.CallBack
@@ -10,6 +11,10 @@ import com.example.greenpoison.rocketbank.view.inter.IMainAView
 import kotlin.concurrent.thread
 
 class MainAPresenterImpl(private val mIMainAView: IMainAView) : IMainAPresenter, CallBack {
+    override fun GetTaskStatus(status: String, number: Int) {
+        mIMainAView.GetTaskStatus(status,number)
+    }
+
     override fun SetGenButtonNonCLickable() {
         mIMainAView.SetGenButtonNonCLickable()
     }
@@ -28,12 +33,12 @@ class MainAPresenterImpl(private val mIMainAView: IMainAView) : IMainAPresenter,
             if (number == 1) {
                 mCallBack.SetGenButtonNonCLickable()
                 thread(true, name = "FillSeedThread1") { mIMainAModel1.FillSeed(bitmap, x, y, number, sleepTime) }
-                mCallBack.SetGenButtonCLickable()
+               // mCallBack.SetGenButtonCLickable()
             }
             if (number == 2) {
                 mCallBack.SetGenButtonNonCLickable()
                 thread(true, name = "FillSeedThread2") { mIMainAModel2.FillSeed(bitmap, x, y, number, sleepTime) }
-                mCallBack.SetGenButtonCLickable()
+                //mCallBack.SetGenButtonCLickable()
             }
         } else if (cur_action == Action.XORALG) {
             if (number == 1) {

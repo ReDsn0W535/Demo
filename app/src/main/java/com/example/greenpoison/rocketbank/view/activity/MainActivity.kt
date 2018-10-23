@@ -81,9 +81,6 @@ class MainActivity : AppCompatActivity(), IMainAView {
                 sleepTime = 20 - progress
             }
         })
-        val toast = Toast.makeText(applicationContext,
-                "Не нажимайте на кнопку generate во время отрисовки изображения, это может привести к неправильной работе программы.", Toast.LENGTH_SHORT)
-        toast.show()
         val itemSelectedListener1 = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
@@ -99,7 +96,7 @@ class MainActivity : AppCompatActivity(), IMainAView {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
                 val item = parent.getItemAtPosition(position) as String
-                drawView1.setFillType(item)
+                drawView2.setFillType(item)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -144,10 +141,10 @@ class MainActivity : AppCompatActivity(), IMainAView {
     }
 
     fun initSettings(d: AlertDialog) {
-        var button = d.getButton(AlertDialog.BUTTON_POSITIVE)
+        val button = d.getButton(AlertDialog.BUTTON_POSITIVE)
         button.setOnClickListener {
-            var new_h = d.findViewById<EditText>(R.id.editHeight)?.text.toString().toInt()
-            var new_w = d.findViewById<EditText>(R.id.editWidth)?.text.toString().toInt()
+            val new_h = d.findViewById<EditText>(R.id.editHeight)?.text.toString().toInt()
+            val new_w = d.findViewById<EditText>(R.id.editWidth)?.text.toString().toInt()
             var params = drawView1.layoutParams
             params.width = new_w
             params.height = new_h
@@ -159,7 +156,7 @@ class MainActivity : AppCompatActivity(), IMainAView {
             // Log.e("MAIN TAG", "${new_h},    ${new_w}")
             d.dismiss()
         }
-        var button2 = d.getButton(AlertDialog.BUTTON_NEGATIVE)
+        val button2 = d.getButton(AlertDialog.BUTTON_NEGATIVE)
         button2.setOnClickListener {
             d.dismiss()
         }
@@ -189,8 +186,8 @@ class DrawView : ImageView {
     }
 
     fun setFillType(type: String) {
-        if (type == "Алгоритм закраски с затравкой") FillType = Action.SEEDALG
-        if (type == "Построчная XOR-обработка") FillType = Action.XORALG
+        if (type == "Алгоритм закраски с затравкой") this.FillType = Action.SEEDALG
+        if (type == "Горизонтальная обработка очередью") this.FillType = Action.XORALG
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -213,7 +210,7 @@ class DrawView : ImageView {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.x?.toInt()!! < drawBitmap.width && event?.y?.toInt()!! < drawBitmap.height) {
             Log.e("Touch LOG", "x = ${event?.x?.toInt()}, y = ${event?.y?.toInt()}")
-            if (event != null && FillType != null) {
+            if (FillType != null) {
                 if (sleepTime < 0) sleepTime = 0
                 mIMainAPresenter?.Fill(drawBitmap, event.x.toInt(), event.y.toInt(), this.number, FillType!!, sleepTime)
             }

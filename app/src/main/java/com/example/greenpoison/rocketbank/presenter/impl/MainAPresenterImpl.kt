@@ -1,7 +1,6 @@
 package com.example.greenpoison.rocketbank.presenter.impl
 
 import android.graphics.Bitmap
-import android.os.AsyncTask
 import com.example.greenpoison.rocketbank.model.impl.MainAModelImpl
 import com.example.greenpoison.rocketbank.model.inter.IMainAModel
 import com.example.greenpoison.rocketbank.presenter.callback.CallBack
@@ -43,13 +42,13 @@ class MainAPresenterImpl(private val mIMainAView: IMainAView) : IMainAPresenter,
         } else if (cur_action == Action.XORALG) {
             if (number == 1) {
                 mCallBack.SetGenButtonNonCLickable()
-                thread(true, name = "XORThread1") { mIMainAModel1.FillXOR(bitmap, x, y, number, sleepTime) }
-                mCallBack.SetGenButtonCLickable()
+                thread(true, name = "XORThread1") { mIMainAModel1.FillDeq(bitmap, x, y, number, sleepTime) }
+                //mCallBack.SetGenButtonCLickable()
             }
             if (number == 2) {
                 mCallBack.SetGenButtonNonCLickable()
-                thread(true, name = "XORThread2") { mIMainAModel2.FillXOR(bitmap, x, y, number, sleepTime) }
-                mCallBack.SetGenButtonCLickable()
+                thread(true, name = "XORThread2") { mIMainAModel2.FillDeq(bitmap, x, y, number, sleepTime) }
+                //mCallBack.SetGenButtonCLickable()
             }
         }
     }
